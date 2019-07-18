@@ -8,7 +8,7 @@ from scipy.signal import resample
 
 
 def plot_first_4_samples(trainX):
-    plt.figure(1, figsize=(10, 6))
+    plt.figure(2, figsize=(10, 6))
     plt.plot(trainX[0], label='learning example 0')
     plt.plot(trainX[1], label='learning example 1')
     plt.plot(trainX[2], label='learning example 2')
@@ -19,7 +19,7 @@ def plot_first_4_samples(trainX):
 
 
 def plot_first_examples_from_each_class(trainX, trainY):
-    plt.figure(2, figsize=(10, 6))
+    plt.figure(3, figsize=(10, 6))
     plt.plot(trainX[0], label='class 1')
 
     train_counts = np.bincount(trainY.astype('int64'))
@@ -33,7 +33,7 @@ def plot_first_examples_from_each_class(trainX, trainY):
 
 
 def plot_simple_ovesampling(trainX):
-    plt.figure(3, figsize=(10, 6))
+    plt.figure(4, figsize=(10, 6))
     plt.plot(trainX[0, :], label='original signal')
     plt.plot(amplify(trainX[0, :]), label='signal after aplifing')
     plt.plot(stretch(trainX[0, :]), label='stretched signal')
