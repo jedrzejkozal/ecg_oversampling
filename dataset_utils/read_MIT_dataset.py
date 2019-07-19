@@ -1,5 +1,4 @@
 import numpy as np
-from keras.utils.np_utils import to_categorical
 from sklearn.model_selection import train_test_split
 
 from dataset_utils.load_data import *
