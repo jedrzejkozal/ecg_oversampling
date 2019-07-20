@@ -51,7 +51,6 @@ def get_components(bcox):
         _, seasonal, trend, remainder = seasonal_decompose(
             bcox, model='additive', freq=82, two_sided=False)
     else:
-        = decomposition
         x = np.arange(len(bcox))
         trend = lowess(bcox, x, frac=0.6666666666666666, it=10,
                        is_sorted=True, return_sorted=False)

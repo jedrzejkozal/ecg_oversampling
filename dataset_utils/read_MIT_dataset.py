@@ -26,7 +26,7 @@ def load_testing_dataset():
     return trainX, trainY, testX, testY
 
 
-def load_validation_dataset(split=0.7):
+def load_validation_dataset(split=0.3):
     trainX, trainY, _, _ = load()
     trainX, validX, trainY, validY = train_test_split(
         trainX, trainY, test_size=split, random_state=42, stratify=trainY)

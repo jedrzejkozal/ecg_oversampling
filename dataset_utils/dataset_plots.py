@@ -35,7 +35,7 @@ def plot_first_examples_from_each_class(trainX, trainY):
 def plot_simple_ovesampling(trainX):
     plt.figure(4, figsize=(10, 6))
     plt.plot(trainX[0, :], label='original signal')
-    plt.plot(amplify(trainX[0, :]), label='signal after aplifing')
+    plt.plot(amplify(trainX[0, :]), label='amplified signal')
     plt.plot(stretch(trainX[0, :]), label='stretched signal')
     plt.legend()
     plt.xlabel('samples')
