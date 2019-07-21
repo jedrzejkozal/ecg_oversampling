@@ -1,4 +1,4 @@
-#from oversampling.old_impl import *
+from oversampling.old_impl import *
 import numpy as np
 import pytest
 
@@ -8,7 +8,7 @@ from oversampling.reduce_imbalance import *
 
 
 def bincount(labels):
-    return np.bincount(labels.astype('int64'))
+    return np.bincount(labels.astype('int64').flatten())
 
 
 def print_bincount(labels):
@@ -22,36 +22,36 @@ def check_bincount(labels):
 
 
 def test_new_impl_400_samples_count_of_learning_examples_for_all_classes_is_equal():
-    x_train, y_train, _, _ = load_testing_dataset()
-    print_bincount(y_train)
-    x_aug, y_aug = reduce_imbalance(
-        x_train, y_train, data_augumentation_generator, num_examples=400)
-    print_bincount(y_aug)
+    _, y_aug = get_dataset(400)
     check_bincount(y_aug)
 
 
 def test_new_impl_3000_samples_count_of_learning_examples_for_all_classes_is_equal():
-    x_train, y_train, _, _ = load_testing_dataset()
-    print_bincount(y_train)
-    x_aug, y_aug = reduce_imbalance(
-        x_train, y_train, data_augumentation_generator, num_examples=3000)
-    print_bincount(y_aug)
+    _, y_aug = get_dataset(3000)
     check_bincount(y_aug)
 
 
 def test_new_impl_6000_samples_count_of_learning_examples_for_all_classes_is_equal():
+    _, y_aug = get_dataset(6000)
+    check_bincount(y_aug)
+
+
+def get_dataset(num_examples):
     x_train, y_train, _, _ = load_testing_dataset()
     print_bincount(y_train)
     x_aug, y_aug = reduce_imbalance(
-        x_train, y_train, data_augumentation_generator, num_examples=6000)
+        x_train, y_train, data_augumentation_generator, num_examples=num_examples)
     print_bincount(y_aug)
-    check_bincount(y_aug)
+    return x_aug, y_aug
 
 
 def old_impl_test():
     num_classes = 5
     x_train, y_train, x_valid, y_valid = load_whole_dataset()
+    return x_train, y_train
 
 
-if __name__ == "__main__":
-    new_impl_test()
+def test_regression_shape_is_the_same():
+    x_old, _ = old_impl_test()
+    x_aug, _ = get_dataset(6000)
+    assert x_aug.shape == x_old.shape

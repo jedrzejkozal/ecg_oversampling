@@ -1,5 +1,6 @@
-from pandas import read_csv
+import numpy as np
 from keras.utils.np_utils import to_categorical
+from pandas import read_csv
 from scipy.signal import resample
 
 
@@ -48,10 +49,10 @@ def oversample_class(trainX, trainY, class_index):
 
 
 def load():
-    trainX = load_data('ecg_heartbeat/mitbih_train.csv')[:, :-1]
-    trainY = load_data('ecg_heartbeat/mitbih_train.csv')[:, -1]
-    testX = load_data('ecg_heartbeat/mitbih_test.csv')[:, :-1]
-    testY = load_data('ecg_heartbeat/mitbih_test.csv')[:, -1]
+    trainX = load_data('dataset/mitbih_train.csv')[:, :-1]
+    trainY = load_data('dataset/mitbih_train.csv')[:, -1]
+    testX = load_data('dataset/mitbih_test.csv')[:, :-1]
+    testY = load_data('dataset/mitbih_test.csv')[:, -1]
 
     print("train set shape: ", trainX.shape)
     print("train set shape: ", trainY.shape)
