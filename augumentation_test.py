@@ -55,3 +55,9 @@ def test_regression_shape_is_the_same():
     x_old, _ = old_impl_test()
     x_aug, _ = get_dataset(6000)
     assert x_aug.shape == x_old.shape
+
+
+def test_regression_bincount_is_the_same():
+    _, y_old = old_impl_test()
+    _, y_aug = get_dataset(6000)
+    assert (bincount(y_old) == bincount(y_aug)).all()

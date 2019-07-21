@@ -130,7 +130,6 @@ def load_whole_dataset():
     testX = np.expand_dims(testX, axis=3)
     testY = np.expand_dims(testY, axis=2)
 
-    trainY, testY = change_y_to_categorical(trainY, testY)
     return trainX, trainY, testX, testY
 
 
@@ -151,7 +150,6 @@ def load_validation_dataset(split=0.7):
     validX = np.expand_dims(validX, axis=3)
     validY = np.expand_dims(validY, axis=2)
 
-    trainY, validY = change_y_to_categorical(trainY, validY)
     return trainX, trainY, validX, validY
 
 
