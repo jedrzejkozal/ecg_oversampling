@@ -5,7 +5,7 @@ from scipy.signal import resample
 def data_augumentation_generator(dataX, examples_to_generate):
     while dataX.shape[0] < examples_to_generate:
         additional_samples = np.apply_along_axis(
-            augment, axis=1, arr=dataX).reshape(-1, 187, 1)
+            augment, axis=1, arr=dataX).reshape(-1, 187)
         dataX = np.vstack([dataX, additional_samples])
     return choose_n_samples(dataX, examples_to_generate)
 
