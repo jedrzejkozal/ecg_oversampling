@@ -25,9 +25,10 @@ def oversample_or_undersample(class_x, num_examples, examples_generator):
 
 
 def get_classes_examples(dataX, dataY):
+    num_classes = 5
     for i in range(num_classes):
         yield (i,) + get_class_examples(dataX, dataY, i)
-    
+
 
 def get_class_examples(dataX, dataY, class_index):
     indexes = get_class_indexes(dataY, class_index)

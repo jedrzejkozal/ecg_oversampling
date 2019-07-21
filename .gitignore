@@ -11,6 +11,7 @@ doc/main.toc
 doc/main.pyg
 doc/texput.log
 doc/main.lot
+dataset/*
 *.pyc
 *__pycache__
 */__pycache__
