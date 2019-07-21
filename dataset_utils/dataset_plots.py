@@ -22,7 +22,7 @@ def plot_first_examples_from_each_class(trainX, trainY):
     plt.figure(3, figsize=(10, 6))
     plt.plot(trainX[0], label='class 1')
 
-    train_counts = np.bincount(trainY.astype('int64'))
+    train_counts = np.bincount(trainY.astype('int64').flatten())
     plt.plot(trainX[train_counts[0]+1], label='class 2')
     plt.plot(trainX[train_counts[1]+1], label='class 3')
     plt.plot(trainX[train_counts[2]+1], label='class 4')
