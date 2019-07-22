@@ -17,6 +17,11 @@ def test_400_samples_number_of_learning_examples_is_rgiht():
     check_if_bincount_have_right_number_of_examples(y_aug, 400)
 
 
+def test_400_samples_number_of_learning_examples_is_the_same_for_x_and_y():
+    x_aug, y_aug = get_dataset(400)
+    assert x_aug.shape[0] == y_aug.shape[0]
+
+
 def test_3000_samples_number_of_learning_examples_for_all_classes_is_equal():
     _, y_aug = get_dataset(3000)
     check_if_bincount_is_equal(y_aug)
@@ -27,6 +32,11 @@ def test_3000_samples_number_of_learning_examples_is_rgiht():
     check_if_bincount_have_right_number_of_examples(y_aug, 3000)
 
 
+def test_3000_samples_number_of_learning_examples_is_the_same_for_x_and_y():
+    x_aug, y_aug = get_dataset(3000)
+    assert x_aug.shape[0] == y_aug.shape[0]
+
+
 def test_6000_samples_number_of_learning_examples_for_all_classes_is_equal():
     _, y_aug = get_dataset(6000)
     check_if_bincount_is_equal(y_aug)
@@ -35,6 +45,11 @@ def test_6000_samples_number_of_learning_examples_for_all_classes_is_equal():
 def test_6000_samples_number_of_learning_examples_is_rgiht():
     _, y_aug = get_dataset(6000)
     check_if_bincount_have_right_number_of_examples(y_aug, 6000)
+
+
+def test_6000_samples_number_of_learning_examples_is_the_same_for_x_and_y():
+    x_aug, y_aug = get_dataset(6000)
+    assert x_aug.shape[0] == y_aug.shape[0]
 
 
 def get_dataset(num_examples):

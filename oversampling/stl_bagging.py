@@ -91,7 +91,7 @@ def plot_components(timeseries, components):
 
 def generate_additional_samples(timeseries, components, num_samples, boxcox_lambda=0.00001):
     trend, seasonal, remainder = components
-    samples = [timeseries.reshape(1, len(timeseries))]
+    samples = []
     use_MBB = False
     if use_MBB:
         reminders = get_MBB_reminders(num_samples, remainder)

@@ -36,7 +36,7 @@ def get_class_examples(dataX, dataY, class_index):
 
 
 def get_class_indexes(dataY, class_index):
-    return np.argwhere(dataY == class_index).flatten()
+    return np.argwhere(dataY.flatten() == class_index).flatten()
 
 
 def choose_n_samples(dataX, n):
