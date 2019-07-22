@@ -4,7 +4,7 @@ from arch.bootstrap import MovingBlockBootstrap as MBB
 from scipy.special import inv_boxcox
 from scipy.stats import boxcox
 from statsmodels.nonparametric.smoothers_lowess import lowess
-from seasonal_decompose import *
+from oversampling.seasonal_decompose import *
 
 
 def stl_bagging(timeseries, num_samples=10):
@@ -13,7 +13,7 @@ def stl_bagging(timeseries, num_samples=10):
     components = get_components(bcox)
     plot_components(bcox, components)
     additional_signals = generate_additional_samples(
-        timeseries, components, num_samples=num_samples, boxcox_lambda=boxcox_lambda)
+        timeseries, components, num_samples, boxcox_lambda=boxcox_lambda)
     return add_padding_back(additional_signals, removed_padding)
 
 
@@ -89,24 +89,25 @@ def plot_components(timeseries, components):
     plt.ylabel('remainder')
 
 
-def generate_additional_samples(timeseries, components, num_samples=10, boxcox_lambda=0.00001):
+def generate_additional_samples(timeseries, components, num_samples, boxcox_lambda=0.00001):
     trend, seasonal, remainder = components
     samples = [timeseries.reshape(1, len(timeseries))]
     use_MBB = False
     if use_MBB:
-        bs = MBB(3, remainder)
-        for data in bs.bootstrap(num_samples):
-            bc = trend + seasonal + data[0][0]
-            samples.append(inv_boxcox(
-                bc, boxcox_lambda).reshape(1, len(timeseries)))
-        return np.concatenate(samples, axis=0)
+        reminders = get_MBB_reminders(num_samples, remainder)
     else:
-        reminders = np.random.randn(num_samples, seasonal.size) / 50
-        print("reminders =")
-        print(reminders)
-        for i in range(num_samples):
-            bc = trend + seasonal + \
-                remainder + reminders[i]
-            samples.append(inv_boxcox(
-                bc, boxcox_lambda).reshape(1, len(timeseries)))
-        return np.concatenate(samples, axis=0)
+        reminders = np.random.randn(
+            num_samples, seasonal.size) / 50 + remainder
+    for i in range(num_samples):
+        bc = trend + seasonal + reminders[i]
+        samples.append(inv_boxcox(
+            bc, boxcox_lambda).reshape(1, len(timeseries)))
+    return np.concatenate(samples, axis=0)
+
+
+def get_MBB_reminders(num_samples, remainder):
+    reminders = np.zeros((num_samples, remainder.size))
+    bs = MBB(3, remainder)
+    for i, data in enumerate(bs.bootstrap(num_samples)):
+        reminders[i] = data[0][0]
+    return reminders
