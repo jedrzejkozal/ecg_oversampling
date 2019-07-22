@@ -8,17 +8,19 @@ from seasonal_decompose import *
 
 
 def stl_bagging(timeseries, num_samples=10):
-    timeseries = preprocess(timeseries)
+    timeseries, removed_padding = preprocess(timeseries)
     bcox, boxcox_lambda = apply_boxcox(timeseries, boxcox_lambda=None)
     components = get_components(bcox)
     plot_components(bcox, components)
-    return generate_additional_samples(timeseries, components, num_samples=num_samples, boxcox_lambda=boxcox_lambda)
+    additional_signals = generate_additional_samples(
+        timeseries, components, num_samples=num_samples, boxcox_lambda=boxcox_lambda)
+    return add_padding_back(additional_signals, removed_padding)
 
 
 def preprocess(timeseries):
     timeseries = timeseries.astype(np.float64)
     timeseries, removed_padding = remove_zero_padding(timeseries)
-    return remove_zeros(timeseries)
+    return remove_zeros(timeseries), removed_padding
 
 
 def remove_zero_padding(timeseries):
@@ -39,6 +41,13 @@ def find_begining_of_padding(timeseries):
 def remove_zeros(timeseries):
     eta = 1e-10
     return timeseries + eta
+
+
+def add_padding_back(signals, removed_padding):
+    padded = np.zeros((signals.shape[0], signals.shape[1]+removed_padding))
+    for i in range(signals.shape[0]):
+        padded[i][:signals[i].size] = signals[i]
+    return padded
 
 
 def apply_boxcox(timeseries, boxcox_lambda=0.9):
