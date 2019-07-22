@@ -22,6 +22,12 @@ def test_400_samples_number_of_learning_examples_is_the_same_for_x_and_y():
     assert x_aug.shape[0] == y_aug.shape[0]
 
 
+def test_400_samples_no_nans_or_infs():
+    x_aug, y_aug = get_dataset(400)
+    checks_for_nans_and_inf(x_aug)
+    checks_for_nans_and_inf(y_aug)
+
+
 def test_3000_samples_number_of_learning_examples_for_all_classes_is_equal():
     _, y_aug = get_dataset(3000)
     check_if_bincount_is_equal(y_aug)
@@ -35,6 +41,13 @@ def test_3000_samples_number_of_learning_examples_is_rgiht():
 def test_3000_samples_number_of_learning_examples_is_the_same_for_x_and_y():
     x_aug, y_aug = get_dataset(3000)
     assert x_aug.shape[0] == y_aug.shape[0]
+
+
+def test_3000_samples_no_nans_or_infs():
+    x_aug, y_aug = get_dataset(3000)
+
+    checks_for_nans_and_inf(x_aug)
+    checks_for_nans_and_inf(y_aug)
 
 
 def test_6000_samples_number_of_learning_examples_for_all_classes_is_equal():
@@ -79,3 +92,9 @@ def check_if_bincount_have_right_number_of_examples(labels, num_examples):
     bin = bincount(labels)
     for b in bin:
         assert b == num_examples
+
+
+def checks_for_nans_and_inf(x):
+    assert not np.isnan(x).any()
+    assert not np.isinf(x).any()
+    assert np.isfinite(x).all()

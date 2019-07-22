@@ -20,4 +20,26 @@ def stl_bagging_generator(dataX, num_examples_we_want):
             additional_samples = stl_bagging(dataX[i], num_samples=generate)
             additional_samples = np.expand_dims(additional_samples, axis=2)
             result = np.vstack([result, additional_samples])
-    return result
+    return sanitize(result)
+
+
+def sanitize(x):
+    indexes = np.argwhere(np.isnan(x) == True)
+    for i in indexes:
+        if i[1] == 0:  # left-most point
+            p1 = (1, x[i[0], i[1]+1, 0])
+            p2 = (2, x[i[0], i[1]+2, 0])
+        else:
+            p1 = (i[1]-1, x[i[0], i[1]-1, 0])
+            p2 = (i[1]+1, x[i[0], i[1]+1, 0])
+        padding = regression_for_two_points_at(p1, p2, i[1])
+        x[i[0], i[1], 0] = padding
+    return x
+
+
+def regression_for_two_points_at(p1, p2, x):
+    if np.isnan(p1[1]) or np.isnan(p2[1]):
+        return 0
+    a = (p1[1] - p2[1])/(p1[0]-p2[0])
+    b = p1[1] - a * p1[0]
+    return a * x + b
