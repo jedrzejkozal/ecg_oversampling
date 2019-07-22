@@ -29,5 +29,5 @@ show_samples(trainX[:4])
 addtional_samples = stl_bagging(trainX[1])
 
 plt.figure(2, figsize=(10, 6))
-show_samples(addtional_samples[:5])
+show_samples(addtional_samples)
 plt.show()

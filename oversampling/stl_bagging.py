@@ -64,6 +64,7 @@ def get_components(bcox):
         trend = lowess(bcox, x, frac=0.6666666666666666, it=10,
                        is_sorted=True, return_sorted=False)
         remainder = bcox - trend
+        seasonal = np.zeros(trend.shape)
     return trend, seasonal, remainder
 
 
@@ -91,9 +92,21 @@ def plot_components(timeseries, components):
 def generate_additional_samples(timeseries, components, num_samples=10, boxcox_lambda=0.00001):
     trend, seasonal, remainder = components
     samples = [timeseries.reshape(1, len(timeseries))]
-    bs = MBB(3, remainder)
-    for data in bs.bootstrap(num_samples):
-        bc = trend + seasonal + data[0][0]
-        samples.append(inv_boxcox(
-            bc, boxcox_lambda).reshape(1, len(timeseries)))
-    return np.concatenate(samples, axis=0)
+    use_MBB = False
+    if use_MBB:
+        bs = MBB(3, remainder)
+        for data in bs.bootstrap(num_samples):
+            bc = trend + seasonal + data[0][0]
+            samples.append(inv_boxcox(
+                bc, boxcox_lambda).reshape(1, len(timeseries)))
+        return np.concatenate(samples, axis=0)
+    else:
+        reminders = np.random.randn(num_samples, seasonal.size) / 50
+        print("reminders =")
+        print(reminders)
+        for i in range(num_samples):
+            bc = trend + seasonal + \
+                remainder + reminders[i]
+            samples.append(inv_boxcox(
+                bc, boxcox_lambda).reshape(1, len(timeseries)))
+        return np.concatenate(samples, axis=0)
