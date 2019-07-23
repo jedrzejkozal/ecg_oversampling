@@ -19,8 +19,10 @@ def oversample_or_undersample(class_x, examples_generator, num_examples):
     num_class_samples = class_x.shape[0]
     if num_class_samples >= num_examples:  # undersampling
         x = choose_n_samples(class_x, num_examples)
-    else:  # oversampling
+    elif examples_generator is not None:  # oversampling
         x = examples_generator(class_x, num_examples)
+    else:
+        x = class_x
     return x
 
 

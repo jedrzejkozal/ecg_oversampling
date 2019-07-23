@@ -9,7 +9,6 @@ class OversamplingTestBase(object):
         try:
             cls.result_400
         except AttributeError:
-            print("calc_results")
             cls.result_400 = cls.get_dataset(400)
             cls.result_3000 = cls.get_dataset(3000)
             cls.result_6000 = cls.get_dataset(6000)

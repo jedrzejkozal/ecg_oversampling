@@ -36,3 +36,8 @@ def imbalance_analysis(filename):
             target_count[0] / target_count[i], 2), ': 1')
 
     target_count.plot(kind='bar', title='Count (target)')
+
+
+def load_whole_dataset():
+    trainX, trainY, testX, testY = load_testing_dataset()
+    return np.vstack([trainX, testX]), np.vstack([trainY, testY])
