@@ -4,51 +4,61 @@ import pytest
 
 class OversamplingTestBase(object):
 
+    @classmethod
+    def setup(cls):
+        try:
+            cls.result_400
+        except AttributeError:
+            print("calc_results")
+            cls.result_400 = cls.get_dataset(400)
+            cls.result_3000 = cls.get_dataset(3000)
+            cls.result_6000 = cls.get_dataset(6000)
+
     def test_400_samples_number_of_learning_examples_for_all_classes_is_equal(self):
-        _, y_aug = self.get_dataset(400)
+        _, y_aug = self.result_400
         self.check_if_bincount_is_equal(y_aug)
 
     def test_400_samples_number_of_learning_examples_is_rgiht(self):
-        _, y_aug = self.get_dataset(400)
+        _, y_aug = self.result_400
         self.check_if_bincount_have_right_number_of_examples(y_aug, 400)
 
     def test_400_samples_number_of_learning_examples_is_the_same_for_x_and_y(self):
-        x_aug, y_aug = self.get_dataset(400)
+        x_aug, y_aug = self.result_400
         assert x_aug.shape[0] == y_aug.shape[0]
 
     def test_400_samples_no_nans_or_infs(self):
-        x_aug, y_aug = self.get_dataset(400)
+        x_aug, y_aug = self.result_400
         self.checks_for_nans_and_inf(x_aug)
         self.checks_for_nans_and_inf(y_aug)
 
     def test_3000_samples_number_of_learning_examples_for_all_classes_is_equal(self):
-        _, y_aug = self.get_dataset(3000)
+        _, y_aug = self.result_3000
         self.check_if_bincount_is_equal(y_aug)
 
     def test_3000_samples_number_of_learning_examples_is_rgiht(self):
-        _, y_aug = self.get_dataset(3000)
+        _, y_aug = self.result_3000
         self.check_if_bincount_have_right_number_of_examples(y_aug, 3000)
 
     def test_3000_samples_number_of_learning_examples_is_the_same_for_x_and_y(self):
-        x_aug, y_aug = self.get_dataset(3000)
+        x_aug, y_aug = self.result_3000
         assert x_aug.shape[0] == y_aug.shape[0]
 
     def test_3000_samples_no_nans_or_infs(self):
-        x_aug, y_aug = self.get_dataset(3000)
+        x_aug, y_aug = self.result_3000
 
         self.checks_for_nans_and_inf(x_aug)
         self.checks_for_nans_and_inf(y_aug)
 
     def test_6000_samples_number_of_learning_examples_for_all_classes_is_equal(self):
-        _, y_aug = self.get_dataset(6000)
+        _, y_aug = self.result_6000
         self.check_if_bincount_is_equal(y_aug)
 
     def test_6000_samples_number_of_learning_examples_is_rgiht(self):
-        _, y_aug = self.get_dataset(6000)
+        _, y_aug = self.result_6000
         self.check_if_bincount_have_right_number_of_examples(y_aug, 6000)
 
     def test_6000_samples_number_of_learning_examples_is_the_same_for_x_and_y(self):
-        x_aug, y_aug = self.get_dataset(6000)
+        x_aug, y_aug = self.result_6000
         assert x_aug.shape[0] == y_aug.shape[0]
 
     def print_bincount(self, labels):
