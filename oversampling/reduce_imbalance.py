@@ -5,11 +5,11 @@ def reduce_imbalance(dataX, dataY, examples_generator, num_examples=6000):
     resultX = []
     resultY = []
 
-    for class_index, class_x, _ in get_classes_examples(dataX, dataY):
+    for class_x, class_y in get_classes_examples(dataX, dataY):
         x = oversample_or_undersample(
             class_x, examples_generator, num_examples)
         resultX.append(x)
-        y = np.ones((num_examples,)) * class_index
+        y = np.ones((num_examples,)) * class_y[0]
         resultY.append(y)
 
     return np.vstack(resultX), np.hstack(resultY)
@@ -27,7 +27,7 @@ def oversample_or_undersample(class_x, examples_generator, num_examples):
 def get_classes_examples(dataX, dataY):
     num_classes = 5
     for i in range(num_classes):
-        yield (i,) + get_class_examples(dataX, dataY, i)
+        yield get_class_examples(dataX, dataY, i)
 
 
 def get_class_examples(dataX, dataY, class_index):
