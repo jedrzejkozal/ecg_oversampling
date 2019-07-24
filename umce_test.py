@@ -68,7 +68,7 @@ class TestUMCE(object):
     def test_get_samples_in_classes_for_simple_dataset_all_returned_y_arrays_contain_only_one_label(self):
         x_train, y_train = self.simple_dataset()
         sut = MuticlassUMCE(self.sample_dummy_classifier, None)
-        _, y_classes = sut.get_samples_in_classes(x_train, y_train)
+        _, y_classes = sut.get_separate_classes(x_train, y_train)
         for y in y_classes:
             array_from_first_label = np.full(y.shape, y[0])
             assert np.array_equal(y, array_from_first_label)
@@ -76,7 +76,7 @@ class TestUMCE(object):
     def test_get_samples_in_classes_for_simple_dataset_all_returned_arrays_have_valid_ndim(self):
         x_train, y_train = self.simple_dataset()
         sut = MuticlassUMCE(self.sample_dummy_classifier, None)
-        x_classes, y_classes = sut.get_samples_in_classes(x_train, y_train)
+        x_classes, y_classes = sut.get_separate_classes(x_train, y_train)
         for x in x_classes:
             assert x.ndim == 2
         for y in y_classes:
@@ -85,18 +85,17 @@ class TestUMCE(object):
     def test_get_samples_in_classes_for_simple_dataset_all_returned_x_y_have_same_number_of_examples(self):
         x_train, y_train = self.simple_dataset()
         sut = MuticlassUMCE(self.sample_dummy_classifier, None)
-        x_train, y_classes = sut.get_samples_in_classes(x_train, y_train)
+        x_train, y_classes = sut.get_separate_classes(x_train, y_train)
         for x, y in zip(x_train, y_classes):
             assert x.shape[0] == y.shape[0]
 
     def test_get_samples_in_classes_for_simple_dataset_all_classes_found(self):
         x_train, y_train = self.simple_dataset()
         sut = MuticlassUMCE(self.sample_dummy_classifier, None)
-        _, y_classes = sut.get_samples_in_classes(x_train, y_train)
+        _, y_classes = sut.get_separate_classes(x_train, y_train)
         assert len(y_classes) == 3
 
     def test_get_num_samples_in_each_class_returns_right_number(self):
-        x_train, y_train = self.simple_dataset()
         sut = MuticlassUMCE(self.sample_dummy_classifier, None)
         arg = [np.array([0, 0, 0]), np.array([1, 1])]
         num_samples = sut.get_num_samples_in_each_class(arg)
@@ -208,7 +207,7 @@ class TestUMCE(object):
         num_features = 4
         x_train, y_train = self.custom_dataset(class_counts, num_features)
         sut = MuticlassUMCE(self.sample_dummy_classifier, None)
-        _, y_classes = sut.get_samples_in_classes(x_train, y_train)
+        _, y_classes = sut.get_separate_classes(x_train, y_train)
         for y in y_classes:
             array_from_first_label = np.full(y.shape, y[0])
             assert np.array_equal(y, array_from_first_label)
@@ -218,7 +217,7 @@ class TestUMCE(object):
         num_features = 4
         x_train, y_train = self.custom_dataset(class_counts, num_features)
         sut = MuticlassUMCE(self.sample_dummy_classifier, None)
-        x_classes, y_classes = sut.get_samples_in_classes(x_train, y_train)
+        x_classes, y_classes = sut.get_separate_classes(x_train, y_train)
         for x in x_classes:
             assert x.ndim == 2
         for y in y_classes:
@@ -229,7 +228,7 @@ class TestUMCE(object):
         num_features = 4
         x_train, y_train = self.custom_dataset(class_counts, num_features)
         sut = MuticlassUMCE(self.sample_dummy_classifier, None)
-        x_train, y_classes = sut.get_samples_in_classes(x_train, y_train)
+        x_train, y_classes = sut.get_separate_classes(x_train, y_train)
         for x, y in zip(x_train, y_classes):
             assert x.shape[0] == y.shape[0]
 
@@ -238,7 +237,7 @@ class TestUMCE(object):
         num_features = 4
         x_train, y_train = self.custom_dataset(class_counts, num_features)
         sut = MuticlassUMCE(self.sample_dummy_classifier, None)
-        _, y_classes = sut.get_samples_in_classes(x_train, y_train)
+        _, y_classes = sut.get_separate_classes(x_train, y_train)
         num_clases = len(class_counts)
         assert len(y_classes) == num_clases
 
@@ -266,7 +265,7 @@ class TestUMCE(object):
     def test_get_samples_in_classes_fuzzer_all_returned_y_arrays_contain_only_one_label(self, class_counts, num_features):
         x_train, y_train = self.custom_dataset(class_counts, num_features)
         sut = MuticlassUMCE(self.sample_dummy_classifier, None)
-        _, y_classes = sut.get_samples_in_classes(x_train, y_train)
+        _, y_classes = sut.get_separate_classes(x_train, y_train)
         for y in y_classes:
             array_from_first_label = np.full(y.shape, y[0])
             assert np.array_equal(y, array_from_first_label)
@@ -276,7 +275,7 @@ class TestUMCE(object):
     def test_get_samples_in_classes_fuzzer_all_returned_arrays_have_valid_ndim(self, class_counts, num_features):
         x_train, y_train = self.custom_dataset(class_counts, num_features)
         sut = MuticlassUMCE(self.sample_dummy_classifier, None)
-        x_classes, y_classes = sut.get_samples_in_classes(x_train, y_train)
+        x_classes, y_classes = sut.get_separate_classes(x_train, y_train)
         for x in x_classes:
             assert x.ndim == 2
         for y in y_classes:
@@ -287,7 +286,7 @@ class TestUMCE(object):
     def test_get_samples_in_classes_fuzzer_all_returned_x_y_have_same_number_of_examples(self, class_counts, num_features):
         x_train, y_train = self.custom_dataset(class_counts, num_features)
         sut = MuticlassUMCE(self.sample_dummy_classifier, None)
-        x_train, y_classes = sut.get_samples_in_classes(x_train, y_train)
+        x_train, y_classes = sut.get_separate_classes(x_train, y_train)
         for x, y in zip(x_train, y_classes):
             assert x.shape[0] == y.shape[0]
 
@@ -296,7 +295,7 @@ class TestUMCE(object):
     def test_get_samples_in_classes_fuzzer_all_classes_found(self, class_counts, num_features):
         x_train, y_train = self.custom_dataset(class_counts, num_features)
         sut = MuticlassUMCE(self.sample_dummy_classifier, None)
-        _, y_classes = sut.get_samples_in_classes(x_train, y_train)
+        _, y_classes = sut.get_separate_classes(x_train, y_train)
         num_clases = len(class_counts)
         assert len(y_classes) == num_clases
 
