@@ -51,8 +51,60 @@ def test_get_num_samples_in_each_class_returns_right_number():
     assert num_samples == [3, 2]
 
 
-def test_after_fit_simple_dataset_k_is_3():
+def test_after_fit_simple_dataset_num_classifiers_is_3():
     x_train, y_train = simple_dataset()
     sut = MuticlassUMCE(sample_dummy_classifier)
     sut.fit(x_train, y_train)
-    assert sut.k == 3
+    assert sut.num_classifiers == 3
+
+
+def test_k_fold_for_each_class_returns_right_number_of_folds():
+    arg_x = [np.array([0, 1, 2, 3]), np.array([4, 5])]
+    arg_y = [np.array([0, 0, 0, 0]), np.array([1, 1])]
+    arg_k_i = [2, 1]
+
+    sut = MuticlassUMCE(sample_dummy_classifier)
+    folds_x, folds_y = sut.k_fold_for_each_class(arg_k_i, arg_x, arg_y)
+    class_0_folds_x, class_1_folds_x = folds_x
+    class_0_folds_y, class_1_folds_y = folds_y
+
+    assert len(class_0_folds_x) == 2
+    assert len(class_0_folds_y) == 2
+    assert len(class_1_folds_x) == 1
+    assert len(class_1_folds_y) == 1
+
+
+def test_k_fold_for_each_class_number_samples_in_each_fold_close_to_minimal_num_of_samples():
+    arg_x = [np.array([0, 1, 2, 3]), np.array([4, 5])]
+    arg_y = [np.array([0, 0, 0, 0]), np.array([1, 1])]
+    arg_k_i = [2, 1]
+    minimal = min(list(map(lambda x: len(x), arg_y)))
+
+    sut = MuticlassUMCE(sample_dummy_classifier)
+    folds_x, folds_y = sut.k_fold_for_each_class(arg_k_i, arg_x, arg_y)
+    class_0_folds_x, class_1_folds_x = folds_x
+    class_0_folds_y, class_1_folds_y = folds_y
+
+    for class_folds_lists in folds_x:
+        for fold in class_folds_lists:
+            # atol due to floor in during calculation of k_i
+            assert np.isclose(len(fold), minimal, atol=1)
+    for class_folds_lists in folds_y:
+        for fold in class_folds_lists:
+            assert np.isclose(len(fold), minimal, atol=1)
+
+
+def test_k_fold_for_each_class_number_each_fold_for_x_and_y_have_the_same_len():
+    arg_x = [np.array([0, 1, 2, 3]), np.array([4, 5])]
+    arg_y = [np.array([0, 0, 0, 0]), np.array([1, 1])]
+    arg_k_i = [2, 1]
+    minimal = min(list(map(lambda x: len(x), arg_y)))
+
+    sut = MuticlassUMCE(sample_dummy_classifier)
+    folds_x, folds_y = sut.k_fold_for_each_class(arg_k_i, arg_x, arg_y)
+    class_0_folds_x, class_1_folds_x = folds_x
+    class_0_folds_y, class_1_folds_y = folds_y
+
+    for class_folds_x_list, class_folds_y_list in zip(folds_x, folds_y):
+        for fold_x, fold_y in zip(class_folds_x_list, class_folds_y_list):
+            assert len(fold_x) == len(fold_y)
