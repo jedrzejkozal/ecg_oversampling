@@ -9,10 +9,6 @@ from ensamble.fusion_methods import *
 
 class TestUMCE(object):
 
-    @classmethod
-    def setup(cls):
-        cls.dummy = DummyClassifier()
-
     def simple_dataset(self):
         all_samples = 30
         x = np.arange(all_samples)
@@ -24,6 +20,20 @@ class TestUMCE(object):
         y = np.hstack([class_a, class_b, class_c])
 
         assert x.shape == (all_samples, 1)
+        assert y.shape == (all_samples,)
+
+        return x, y
+
+    def custom_dataset(self, num_samples_in_classes, num_features):
+        all_samples = sum(num_samples_in_classes)
+        x = np.arange(all_samples*num_features)
+        x = x.reshape((all_samples, num_features))
+
+        lables = [np.full((num_samples,), label)
+                  for label, num_samples in enumerate(num_samples_in_classes)]
+        y = np.hstack(lables)
+
+        assert x.shape == (all_samples, num_features)
         assert y.shape == (all_samples,)
 
         return x, y
@@ -138,7 +148,7 @@ class TestUMCE(object):
             for fold in class_folds_lists:
                 assert fold.ndim == 1
 
-    def test_after_fit_dummy_classifiers_are_fitted(self):
+    def test_simple_dataset_after_fit_dummy_classifiers_are_fitted(self):
         x_train, y_train = self.simple_dataset()
         sut = MuticlassUMCE(self.sample_dummy_classifier, None)
         sut.fit(x_train, y_train)
@@ -146,6 +156,64 @@ class TestUMCE(object):
 
     def test_simple_dataset_after_predict_reutrns_array_with_valid_size(self):
         x_train, y_train = self.simple_dataset()
+        x_test, _ = self.simple_dataset()
+
+        sut = MuticlassUMCE(self.sample_dummy_classifier, avrg_fusion)
+        sut.fit(x_train, y_train)
+        y_pred = sut.predict(x_test)
+        assert y_pred.shape == (30, 3)
+
+    def test_get_samples_in_classes_all_returned_y_arrays_contain_only_one_label(self):
+        class_counts = (5, 10, 15)
+        num_features = 4
+        x_train, y_train = self.custom_dataset(class_counts, num_features)
+        sut = MuticlassUMCE(self.sample_dummy_classifier, None)
+        _, y_classes = sut.get_samples_in_classes(x_train, y_train)
+        for y in y_classes:
+            array_from_first_label = np.full(y.shape, y[0])
+            assert np.array_equal(y, array_from_first_label)
+
+    def test_get_samples_in_classes_all_returned_arrays_have_valid_ndim(self):
+        class_counts = (5, 10, 15)
+        num_features = 4
+        x_train, y_train = self.custom_dataset(class_counts, num_features)
+        sut = MuticlassUMCE(self.sample_dummy_classifier, None)
+        x_classes, y_classes = sut.get_samples_in_classes(x_train, y_train)
+        for x in x_classes:
+            assert x.ndim == 2
+        for y in y_classes:
+            assert y.ndim == 1
+
+    def test_get_samples_in_classes_all_returned_x_y_have_same_number_of_examples(self):
+        class_counts = (5, 10, 15)
+        num_features = 4
+        x_train, y_train = self.custom_dataset(class_counts, num_features)
+        sut = MuticlassUMCE(self.sample_dummy_classifier, None)
+        x_train, y_classes = sut.get_samples_in_classes(x_train, y_train)
+        for x, y in zip(x_train, y_classes):
+            assert x.shape[0] == y.shape[0]
+
+    def test_get_samples_in_classes_all_classes_found(self):
+        class_counts = (5, 10, 15)
+        num_features = 4
+        x_train, y_train = self.custom_dataset(class_counts, num_features)
+        sut = MuticlassUMCE(self.sample_dummy_classifier, None)
+        _, y_classes = sut.get_samples_in_classes(x_train, y_train)
+        num_clases = len(class_counts)
+        assert len(y_classes) == num_clases
+
+    def test_after_fit_dummy_classifiers_are_fitted(self):
+        class_counts = (5, 10, 15)
+        num_features = 4
+        x_train, y_train = self.custom_dataset(class_counts, num_features)
+        sut = MuticlassUMCE(self.sample_dummy_classifier, None)
+        sut.fit(x_train, y_train)
+        check_is_fitted(self.dummy, 'classes_')
+
+    def test_after_predict_reutrns_array_with_valid_size(self):
+        class_counts = (5, 10, 15)
+        num_features = 4
+        x_train, y_train = self.custom_dataset(class_counts, num_features)
         x_test, _ = self.simple_dataset()
 
         sut = MuticlassUMCE(self.sample_dummy_classifier, avrg_fusion)

@@ -104,5 +104,4 @@ class MuticlassUMCE(object):
 
     def get_decision(self, x_test):
         predicion = self.models[0].predict(x_test)
-        print("prediction shape = ", predicion.shape)
         return [base_model.predict(x_test) for base_model in self.models]
