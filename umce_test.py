@@ -1,3 +1,5 @@
+from hypothesis import given
+from hypothesis.strategies import integers, lists
 import numpy as np
 import pytest
 from sklearn.dummy import DummyClassifier
@@ -220,3 +222,83 @@ class TestUMCE(object):
         sut.fit(x_train, y_train)
         y_pred = sut.predict(x_test)
         assert y_pred.shape == (30, 3)
+
+    @given(lists(integers(min_value=1, max_value=512), min_size=2, max_size=10),
+           integers(min_value=1, max_value=100))
+    def test_get_samples_in_classes_fuzzer_all_returned_y_arrays_contain_only_one_label(self, class_counts, num_features):
+        x_train, y_train = self.custom_dataset(class_counts, num_features)
+        sut = MuticlassUMCE(self.sample_dummy_classifier, None)
+        _, y_classes = sut.get_samples_in_classes(x_train, y_train)
+        for y in y_classes:
+            array_from_first_label = np.full(y.shape, y[0])
+            assert np.array_equal(y, array_from_first_label)
+
+    @given(lists(integers(min_value=1, max_value=512), min_size=2, max_size=10),
+           integers(min_value=1, max_value=100))
+    def test_get_samples_in_classes_fuzzer_all_returned_arrays_have_valid_ndim(self, class_counts, num_features):
+        x_train, y_train = self.custom_dataset(class_counts, num_features)
+        sut = MuticlassUMCE(self.sample_dummy_classifier, None)
+        x_classes, y_classes = sut.get_samples_in_classes(x_train, y_train)
+        for x in x_classes:
+            assert x.ndim == 2
+        for y in y_classes:
+            assert y.ndim == 1
+
+    @given(lists(integers(min_value=1, max_value=512), min_size=2, max_size=10),
+           integers(min_value=1, max_value=100))
+    def test_get_samples_in_classes_fuzzer_all_returned_x_y_have_same_number_of_examples(self, class_counts, num_features):
+        x_train, y_train = self.custom_dataset(class_counts, num_features)
+        sut = MuticlassUMCE(self.sample_dummy_classifier, None)
+        x_train, y_classes = sut.get_samples_in_classes(x_train, y_train)
+        for x, y in zip(x_train, y_classes):
+            assert x.shape[0] == y.shape[0]
+
+    @given(lists(integers(min_value=1, max_value=512), min_size=2, max_size=10),
+           integers(min_value=1, max_value=100))
+    def test_get_samples_in_classes_fuzzer_all_classes_found(self, class_counts, num_features):
+        x_train, y_train = self.custom_dataset(class_counts, num_features)
+        sut = MuticlassUMCE(self.sample_dummy_classifier, None)
+        _, y_classes = sut.get_samples_in_classes(x_train, y_train)
+        num_clases = len(class_counts)
+        assert len(y_classes) == num_clases
+
+    @given(lists(integers(min_value=1, max_value=512), min_size=2, max_size=10),
+           integers(min_value=1, max_value=100))
+    def test_fuzzer_after_fit_dummy_classifiers_are_fitted(self, class_counts, num_features):
+        x_train, y_train = self.custom_dataset(class_counts, num_features)
+        sut = MuticlassUMCE(self.sample_dummy_classifier, None)
+        sut.fit(x_train, y_train)
+        check_is_fitted(self.dummy, 'classes_')
+
+    @given(lists(integers(min_value=1, max_value=512), min_size=2, max_size=10),
+           integers(min_value=1, max_value=100))
+    def test_fuzzer_after_predict_reutrns_array_with_valid_size(self, class_counts, num_features):
+        x_train, y_train = self.custom_dataset(class_counts, num_features)
+        x_test, y_test = self.custom_dataset(class_counts, num_features)
+
+        sut = MuticlassUMCE(self.sample_dummy_classifier, avrg_fusion)
+        sut.fit(x_train, y_train)
+        y_pred = sut.predict(x_test)
+        assert y_pred.shape == to_categorical(y_test).shape
+
+    # failed test cases found by fuzzer
+
+    def test_single_samples_in_two_classes_after_predict_reutrns_array_with_valid_size(self):
+        class_counts = [1, 1]
+        num_features = 1
+        x_train, y_train = self.custom_dataset(class_counts, num_features)
+        x_test, y_test = self.custom_dataset(class_counts, num_features)
+
+        sut = MuticlassUMCE(self.sample_dummy_classifier, avrg_fusion)
+        sut.fit(x_train, y_train)
+        y_pred = sut.predict(x_test)
+        assert y_pred.shape == to_categorical(y_test).shape
+
+    # deadline exceded
+    def test_many_samples_after_fit_dummy_classifiers_are_fitted(self):
+        class_counts = [2557, 4061, 4061, 4061, 2305, 2305, 1]
+        num_features = 2
+        x_train, y_train = self.custom_dataset(class_counts, num_features)
+        sut = MuticlassUMCE(self.sample_dummy_classifier, None)
+        sut.fit(x_train, y_train)
+        check_is_fitted(self.dummy, 'classes_')
