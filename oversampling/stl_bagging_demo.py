@@ -20,8 +20,7 @@ def show_samples(samples):
 
 
 trainX = load_data('dataset/mitbih_train.csv')[:, :-1]
-trainX = trainX.reshape((trainX.shape[0], trainX.shape[1], 1))
-
+trainX = np.expand_dims(trainX, axis=2)
 
 plt.figure(1, figsize=(10, 6))
 show_samples(trainX[:4])
