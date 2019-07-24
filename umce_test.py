@@ -11,6 +11,24 @@ from ensamble.fusion_methods import *
 
 class TestUMCE(object):
 
+    class ModelMock(object):
+
+        def __init__(self):
+            self.dummy = DummyClassifier()
+            self.how_many_times_fit_was_called = 0
+            self.how_many_times_predict_was_called = 0
+
+        def fit(self, x_train, y_train):
+            self.how_many_times_fit_was_called += 1
+            self.dummy.fit(x_train, y_train)
+
+        def predict(self, x_test):
+            self.how_many_times_predict_was_called += 1
+            return self.dummy.predict(x_test)
+
+    def setup(cls):
+        cls.mock = TestUMCE.ModelMock()
+
     def simple_dataset(self):
         all_samples = 30
         x = np.arange(all_samples)
@@ -43,6 +61,9 @@ class TestUMCE(object):
     def sample_dummy_classifier(self):
         self.dummy = DummyClassifier()
         return self.dummy
+
+    def sample_mock(self):
+        return self.mock
 
     def test_get_samples_in_classes_for_simple_dataset_all_returned_y_arrays_contain_only_one_label(self):
         x_train, y_train = self.simple_dataset()
@@ -164,6 +185,23 @@ class TestUMCE(object):
         sut.fit(x_train, y_train)
         y_pred = sut.predict(x_test)
         assert y_pred.shape == (30, 3)
+
+    def test_ModelMock_fit_called_3_times(self):
+        x_train, y_train = self.simple_dataset()
+        sut = MuticlassUMCE(self.sample_mock, None)
+        sut.fit(x_train, y_train)
+
+        assert self.mock.how_many_times_fit_was_called == 3
+
+    def test_ModelMock_predict_called_3_times(self):
+        x_train, y_train = self.simple_dataset()
+        x_test, _ = self.simple_dataset()
+
+        sut = MuticlassUMCE(self.sample_mock, avrg_fusion)
+        sut.fit(x_train, y_train)
+        sut.predict(x_test)
+
+        assert self.mock.how_many_times_predict_was_called == 3
 
     def test_get_samples_in_classes_all_returned_y_arrays_contain_only_one_label(self):
         class_counts = (5, 10, 15)

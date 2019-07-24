@@ -103,5 +103,4 @@ class MuticlassUMCE(object):
         return self.fusion_method(decisions)
 
     def get_decision(self, x_test):
-        predicion = self.models[0].predict(x_test)
         return [base_model.predict(x_test) for base_model in self.models]
