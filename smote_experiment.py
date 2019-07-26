@@ -4,7 +4,7 @@ from sklearn.model_selection import StratifiedKFold
 from base_model import *
 from dataset_utils.read_MIT_dataset import *
 from oversampling.smote import *
-from metrics import *
+from experiment_utils.metrics import *
 
 if __name__ == '__main__':
     num_classes = 5
