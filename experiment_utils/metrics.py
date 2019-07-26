@@ -2,6 +2,7 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
 from sklearn.metrics import precision_recall_fscore_support
 from sklearn.utils.multiclass import unique_labels
+import numpy as np
 
 
 def metrics_values(y_pred, y_true):
