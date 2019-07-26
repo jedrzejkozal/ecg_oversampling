@@ -13,13 +13,10 @@ def smote(dataX, dataY):
 
 
 def smote_with_data_agumentation(dataX, dataY):
-    print("dataX.shape = ", dataX.shape)
     num_samples = dataX.shape[0]
     augX, augY = smote(dataX, dataY)
     generatedX = augX[num_samples:]
     generatedX = augument_data(generatedX)
-    print(dataX.shape)
-    print(generatedX.shape)
     return np.vstack([dataX, generatedX]), augY
 
 
