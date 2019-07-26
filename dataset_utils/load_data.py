@@ -38,11 +38,6 @@ def imbalance_analysis(filename):
     target_count.plot(kind='bar', title='Count (target)')
 
 
-def load_whole_dataset():
-    trainX, trainY, testX, testY = load_testing_dataset()
-    return np.vstack([trainX, testX]), np.vstack([trainY, testY])
-
-
 def sets_shapes_report(x_train, y_train):
     print("train set shape: ", x_train.shape)
     print("train set shape: ", y_train.shape)

@@ -17,3 +17,8 @@ def load_validation_dataset(split=0.3):
         trainX, trainY, test_size=split, random_state=42, stratify=trainY)
 
     return trainX, trainY, validX, validY
+
+
+def load_whole_dataset():
+    trainX, trainY, testX, testY = load_testing_dataset()
+    return np.vstack([trainX, testX]), np.vstack([trainY, testY])
