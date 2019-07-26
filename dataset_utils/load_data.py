@@ -41,3 +41,11 @@ def imbalance_analysis(filename):
 def load_whole_dataset():
     trainX, trainY, testX, testY = load_testing_dataset()
     return np.vstack([trainX, testX]), np.vstack([trainY, testY])
+
+
+def sets_shapes_report(x_train, y_train):
+    print("train set shape: ", x_train.shape)
+    print("train set shape: ", y_train.shape)
+
+    print("train classes sample count:")
+    print(np.bincount(y_train.astype('int32').flatten()))
