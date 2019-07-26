@@ -82,7 +82,7 @@ class MuticlassUMCE(object):
                        for i in range(self.num_classifiers)]
 
     def __fit_all_models(self, k_i: List[int], folds_x: Tuple[List[np.ndarray]], folds_y: Tuple[List[np.ndarray]]) -> None:
-        for base_model in self.models:
+        for i, base_model in enumerate(self.models):
             print("fitting model {}/{}".format(i+1, len(self.models)))
             x_train, y_train = self.__get_trainigset(k_i, folds_x, folds_y)
             y_train = to_categorical(y_train, num_classes=self.num_classes)
