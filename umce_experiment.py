@@ -1,6 +1,7 @@
 from keras.utils.np_utils import to_categorical
 from sklearn.model_selection import StratifiedKFold
 
+from base_model import *
 from dataset_utils.read_MIT_dataset import *
 from ensamble.fusion_methods import *
 from ensamble.umce import *
