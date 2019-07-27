@@ -6,6 +6,7 @@ from dataset_utils.read_MIT_dataset import *
 from ensamble.fusion_methods import *
 from ensamble.umce import *
 from experiment_utils.metrics import *
+from oversampling.reduce_imbalance import *
 
 if __name__ == '__main__':
     num_classes = 5
