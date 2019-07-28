@@ -90,6 +90,46 @@ fold10 = np.array([
 ])
 
 
+def save_all(folds):
+    for i, fold in enumerate(folds):
+        filename = "umce/fold" + str(i)
+        print(filename)
+        np.save(filename, fold)
+
+
+def load_all(folder: str):
+    result = []
+    for i in range(0, 10):
+        filename = folder + "/fold" + str(i) + ".npy"
+        fold = np.load(filename)
+        result.append(fold)
+    return result
+
+
+def folds_avrg(all_results):
+    return list(map(lambda x: np.mean(x, axis=0), all_results))
+
+
+all_folds = [
+    fold1,
+    fold2,
+    fold3,
+    fold4,
+    fold5,
+    fold6,
+    fold7,
+    fold8,
+    fold9,
+    fold10,
+]
+
+save_all(all_folds)
+del all_folds
+all_folds = load_all('umce')
+
+fold_mean = folds_avrg(all_folds)
+
+
 fold1_avrg = np.mean(fold1, axis=0)
 fold2_avrg = np.mean(fold2, axis=0)
 fold3_avrg = np.mean(fold3, axis=0)
@@ -123,6 +163,9 @@ print(fold9_avrg)
 print("fold10 avrg")
 print(fold10_avrg)
 
+assert np.isclose(fold1_avrg, fold_mean[0]).all()
+
+
 all_avrg = np.vstack(
     [fold1_avrg,
      fold2_avrg,
@@ -138,3 +181,15 @@ all_avrg = np.vstack(
 print("average value of metrics:")
 print("precision    recall  f1-score")
 print(np.mean(all_avrg, axis=0))
+
+all_folds = [fold1, fold2, fold3, fold4, fold5,
+             fold6, fold7, fold8, fold9, fold10]
+all_folds = list(map(lambda x: np.expand_dims(x, axis=2), all_folds))
+
+all_folds = np.concatenate(all_folds, axis=2)
+
+avrg_label_metrics = np.mean(all_folds, axis=2)
+print("\navrg_label_metrics:")
+print(avrg_label_metrics)
+print("avrg acros labels:")
+print(np.mean(avrg_label_metrics, axis=0))
