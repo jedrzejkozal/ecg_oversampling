@@ -1,4 +1,5 @@
 import numpy as np
+from utils import *
 
 """
 learning for umce was stoped, but we can
@@ -90,26 +91,6 @@ fold10 = np.array([
 ])
 
 
-def save_all(folds):
-    for i, fold in enumerate(folds):
-        filename = "umce/fold" + str(i)
-        print(filename)
-        np.save(filename, fold)
-
-
-def load_all(folder: str):
-    result = []
-    for i in range(0, 10):
-        filename = folder + "/fold" + str(i) + ".npy"
-        fold = np.load(filename)
-        result.append(fold)
-    return result
-
-
-def folds_avrg(all_results):
-    return list(map(lambda x: np.mean(x, axis=0), all_results))
-
-
 all_folds = [
     fold1,
     fold2,
@@ -123,11 +104,7 @@ all_folds = [
     fold10,
 ]
 
-save_all(all_folds)
-del all_folds
-all_folds = load_all('umce')
-
-fold_mean = folds_avrg(all_folds)
+save_all(all_folds, 'umce')
 
 
 fold1_avrg = np.mean(fold1, axis=0)
@@ -162,8 +139,6 @@ print("fold9 avrg")
 print(fold9_avrg)
 print("fold10 avrg")
 print(fold10_avrg)
-
-assert np.isclose(fold1_avrg, fold_mean[0]).all()
 
 
 all_avrg = np.vstack(
